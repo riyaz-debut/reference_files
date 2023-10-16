@@ -1,0 +1,144 @@
+peer1org9.fabdep.com
+peer2org9.fabdep.com
+orderer7.fabdep.com
+
+
+
+https://github.com/harjot-debut/example_cc/raw/main/example_cc_2.zip
+2022-06-24 17:00:44
+2022-07-29 16:43:52
+
+/home/riyaz/projects/integra/integra-client-backend/integra-nock-sdk/envelopeFiles/envelopConfig.pb
+/home/riyaz/Documents/integra-admin-backend/integra-nock-sdk/config-envelope
+https://github.com/harjot-debut/example_cc/raw/main/example_cc.zip
+2022-06-23 10:47:01
+2022-06-24 14:45:03
+
+chaincode_logs [{1 1 example_cc example_cc 1 1 2 Org1 Org1MSP 2022-06-30 09:15:04 +0000 UTC 2022-06-30 09:15:04 +0000 UTC}]
+2022/08/05 11:19:19 array [1]
+
+update cc id  [{10 1 example_cc example_cc 1 2 https://github.com/harjot-debut/example_cc/raw/main/example_cc_3.zip 1 2022-08-03T12:31:30Z 2022-08-03T12:31:30Z}]
+
+
+====================================== Navpreet Sir frontend account =================================== 
+
+https://github.com/Manpreet-singh-24/integra-nock-frontend
+navpreet-debut
+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
+
+git clone https://tejindermethodbridge@bitbucket.org/osqo/hyperledger-sdk.git
+nbhJfZXhbyjKmBGn7WNW
+
+
+git clone https://tejindermethodbridge@bitbucket.org/osqo/hyperledger.git
+
+
+git clone https://tejindermethodbridge@bitbucket.org/osqo/hyperledger-new-org.git
+
+
+===================================== osqo chaincode and sdk credentials ===============================
+// integra server
+ssh -i Ubuntu-new_key.pem azureuser@20.5.168.146
+
+// xfarm t2 medium new instance(linux ami image)
+ssh -i "xfarm-blockchain.pem" ec2-user@ec2-184-72-123-3.compute-1.amazonaws.com
+
+
+// xfarm production env.
+ssh -i "xfarm-blockchain-prod.pem" ec2-user@ec2-54-166-22-136.compute-1.amazonaws.com
+ip: 54.166.22.136
+
+// xfarm internal instance
+ssh -i "xfarm.pem" ec2-user@ec2-54-88-210-182.compute-1.amazonaws.com
+
+// xfarm couchdb url
+http://ec2-54-166-22-136.compute-1.amazonaws.com:5984/_utils/#login
+
+http://ec2-44-200-210-21.compute-1.amazonaws.com:5984/_utils/#login
+
+
+ec2-13-210-137-148.ap-southeast-2.compute.amazonaws.com  HLF 1
+
+ec2-52-62-183-194.ap-southeast-2.compute.amazonaws.com HLF 2
+
+ec2-34-208-86-43.us-west-2.compute.amazonaws.com HLF 3
+
+git clone https://tejindermethodbridge@bitbucket.org/osqo/hyperledger-sdk.git
+
+nbhJfZXhbyjKmBGn7WNW
+
+
+// fabdep instance
+50.16.89.235
+FabdepDev2023
+
+
+
+=============================debut git password token========================================================================
+
+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
+
+=======================================================================================================================
+
+============================== bitbucket password token ===================================
+
+ATBB3LeRb43rp8BGbe9wH4XjEZ3X85F3EA97
+
+===========================================================================================
+
+https://github.com/riyazansari01/oneOrg-network.git
+
+//add comments for read.md file
+echo "# chatApp" >> README.md
+
+088320dbffa6
+
+//create .git folder
+git init
+
+//for add read.md file in queue
+git add README.md
+
+//add commit instruction for adding the file
+git commit -m "first commit"
+
+//The following command makes a new branch in the repository
+git branch -M main
+
+//The git remote add command will create a new connection record to a remote repository. 
+After adding a remote, you’ll be able to use as a convenient shortcut for in other Git commands.
+
+git remote add origin https://github.com/riyazansari01/chatApp.git
+
+//used for push the file and folder to main branch
+git push -u origin main
+
+//the following command to view current branches in the code repository:
+git branch
+
+//the following command to view all branches in the code repository:
+git branch -a
+
+//the following command to fetch all repositories locally:
+git fetch -a
+
+
+//The following command allows you to switch to a branch named features/development:
+git checkout features/development
+
+//The git status command is used to display the state of the repository and staging area. 
+It allows us to see the tracked, untracked files and changes.
+git status
+
+//for adding all the files of current folder 
+git add .
+
+//add commit instruction for adding the file
+git commit -m "add a chat application used for communication"
+
+//for taking pull of the current branch features/development
+git pull origin features/development
+
+//push the codes to the branch features/development
+git push origin features/development
+

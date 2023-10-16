@@ -1,0 +1,28 @@
+# version: '3.3'
+# services:
+#   db:
+#     image: mysql:8.0.29
+#     restart: always
+#     environment:
+#       MYSQL_DATABASE: 'integradb'
+#       MYSQL_USER: 'riyaz'
+#       MYSQL_PASSWORD: 'RIYAZdebut@2021'
+#       # MYSQL_ROOT_PASSWORD: 'password'
+#     ports:
+#       - '3306:3306'
+#     expose:
+#       - '3306'
+#     volumes:
+#       - my-db:/var/lib/mysql
+# volumes:
+#   my-db:
+
+mysql:
+  image: integra_dump
+  ports:
+   - "3306:3306"
+  environment:
+    MYSQL_ROOT_PASSWORD: strongrootpassword
+    MYSQL_USER: 'riyaz'
+    MYSQL_PASSWORD: 'RIYAZdebut@2021'
+    MYSQL_DATABASE: integra_data 

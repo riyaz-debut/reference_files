@@ -1,0 +1,222 @@
+Organizations:
+  - &orderer12org
+    Name: orderer12org
+    ID: orderer12msp
+    MSPDir: /home/riyaz/Documents/network1/orderer12org-root-ca/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: OR('orderer12msp.member')
+      Writers:
+        Type: Signature
+        Rule: OR('orderer12msp.member')
+      Admins:
+        Type: Signature
+        Rule: OR('orderer12msp.admin')
+    OrdererEndpoints:
+      - orderer0-orderer12org:32051
+      - orderer1-orderer12org:32052
+      - orderer2-orderer12org:32053
+      - orderer3-orderer12org:32054
+      - orderer4-orderer12org:32055
+  - &org6
+    Name: org6msp
+    ID: org6msp
+    MSPDir: /home/riyaz/Documents/network1/org6-root-ca/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: OR("org6msp.admin", "org6msp.peer", "org6msp.client")
+      Writers:
+        Type: Signature
+        Rule: OR("org6msp.admin", "org6msp.client")
+      Admins:
+        Type: Signature
+        Rule: OR("org6msp.admin")
+      Endorsement:
+        Type: Signature
+        Rule: OR("org6msp.peer")
+    AnchorPeers:
+      - Host: peer0-org6
+        Port: 31033 
+Capabilities:
+  Channel: &ChannelCapabilities
+      V2_0: true
+  Orderer: &OrdererCapabilities
+      V2_0: true
+  Application: &ApplicationCapabilities
+      V2_0: true
+Application: &ApplicationDefaults
+    Organizations: 
+    Policies:
+      Readers:
+        Type: ImplicitMeta
+        Rule: "ANY Readers"
+      Writers:
+        Type: ImplicitMeta
+        Rule: "ANY Writers"
+      Admins:
+        Type: ImplicitMeta
+        Rule: "MAJORITY Admins"
+      LifecycleEndorsement:
+        Type: ImplicitMeta
+        Rule: "MAJORITY Endorsement"
+      Endorsement:
+        Type: ImplicitMeta
+        Rule: "MAJORITY Endorsement"
+    Capabilities:
+      <<: *ApplicationCapabilities
+Orderer: &OrdererDefaults
+    OrdererType: etcdraft
+    Addresses: 
+      - orderer0-orderer12org:32051
+      - orderer1-orderer12org:32052
+      - orderer2-orderer12org:32053
+      - orderer3-orderer12org:32054
+      - orderer4-orderer12org:32055
+    EtcdRaft:
+      Consenters:
+        - Host: orderer0-orderer12org
+          Port: 32051
+          ClientTLSCert: >-
+            /home/riyaz/Documents/network1/orderer12org-root-ca/orderer0-orderer12org/crypto/tls/server.crt
+          ServerTLSCert: >-
+            /home/riyaz/Documents/network1/orderer12org-root-ca/orderer0-orderer12org/crypto/tls/server.crt
+        - Host: orderer1-orderer12org
+          Port: 32052
+          ClientTLSCert: >-
+            /home/riyaz/Documents/network1/orderer12org-root-ca/orderer1-orderer12org/crypto/tls/server.crt
+          ServerTLSCert: >-
+            /home/riyaz/Documents/network1/orderer12org-root-ca/orderer1-orderer12org/crypto/tls/server.crt
+        - Host: orderer2-orderer12org
+          Port: 32053
+          ClientTLSCert: >-
+            /home/riyaz/Documents/network1/orderer12org-root-ca/orderer2-orderer12org/crypto/tls/server.crt
+          ServerTLSCert: >-
+            /home/riyaz/Documents/network1/orderer12org-root-ca/orderer2-orderer12org/crypto/tls/server.crt
+        - Host: orderer3-orderer12org
+          Port: 32054
+          ClientTLSCert: >-
+            /home/riyaz/Documents/network1/orderer12org-root-ca/orderer3-orderer12org/crypto/tls/server.crt
+          ServerTLSCert: >-
+            /home/riyaz/Documents/network1/orderer12org-root-ca/orderer3-orderer12org/crypto/tls/server.crt
+        - Host: orderer4-orderer12org
+          Port: 32055
+          ClientTLSCert: >-
+            /home/riyaz/Documents/network1/orderer12org-root-ca/orderer4-orderer12org/crypto/tls/server.crt
+          ServerTLSCert: >-
+            /home/riyaz/Documents/network1/orderer12org-root-ca/orderer4-orderer12org/crypto/tls/server.crt
+    BatchTimeout: 2s
+    BatchSize:
+      MaxMessageCount: 10
+      AbsoluteMaxBytes: 99 MB
+      PreferredMaxBytes: 512 KB
+    Organizations: 
+    Policies:
+      Readers:
+        Type: ImplicitMeta
+        Rule: "ANY Readers"
+      Writers:
+        Type: ImplicitMeta
+        Rule: "ANY Writers"
+      Admins:
+        Type: ImplicitMeta
+        Rule: "MAJORITY Admins"
+      BlockValidation:
+        Type: ImplicitMeta
+        Rule: "ANY Writers"
+Channel: &ChannelDefaults
+    Policies:
+      Readers:
+        Type: ImplicitMeta
+        Rule: "ANY Readers"
+      Writers:
+        Type: ImplicitMeta
+        Rule: "ANY Writers"
+      Admins:
+        Type: ImplicitMeta
+        Rule: "MAJORITY Admins"
+    Capabilities:
+      <<: *ChannelCapabilities
+Profiles:
+  SampleOrdererGenesis:
+    <<: *ChannelDefaults
+    Orderer:
+      <<: *OrdererDefaults
+      Organizations:
+        - *orderer12org
+      Capabilities:
+        <<: *OrdererCapabilities
+    Consortiums:
+      SampleConsortium:
+        Organizations:
+          - *org6
+  OrgsChannel:
+    Consortium: SampleConsortium
+    <<: *ChannelDefaults
+    Application:
+      <<: *ApplicationDefaults
+      Organizations:
+        - *org6
+      Capabilities:
+        <<: *ApplicationCapabilities
+
+  MultiNodeEtcdRaft:
+    <<: *ChannelDefaults
+    Capabilities:
+      <<: *ChannelCapabilities
+    Orderer:
+      <<: *OrdererDefaults
+      OrdererType: etcdraft
+      EtcdRaft:
+        Consenters:
+        - Host: orderer0-orderer12org
+          Port: 7050
+          ClientTLSCert: >-
+            /home/riyaz/Documents/network1/orderer12org-root-ca/orderer0-orderer12org/crypto/tls/server.crt
+          ServerTLSCert: >-
+            /home/riyaz/Documents/network1/orderer12org-root-ca/orderer0-orderer12org/crypto/tls/server.crt
+        - Host: orderer1-orderer12org
+          Port: 7050
+          ClientTLSCert: >-
+            /home/riyaz/Documents/network1/orderer12org-root-ca/orderer1-orderer12org/crypto/tls/server.crt
+          ServerTLSCert: >-
+            /home/riyaz/Documents/network1/orderer12org-root-ca/orderer1-orderer12org/crypto/tls/server.crt
+        - Host: orderer2-orderer12org
+          Port: 7050
+          ClientTLSCert: >-
+            /home/riyaz/Documents/network1/orderer12org-root-ca/orderer2-orderer12org/crypto/tls/server.crt
+          ServerTLSCert: >-
+            /home/riyaz/Documents/network1/orderer12org-root-ca/orderer2-orderer12org/crypto/tls/server.crt
+        - Host: orderer3-orderer12org
+          Port: 7050
+          ClientTLSCert: >-
+            /home/riyaz/Documents/network1/orderer12org-root-ca/orderer3-orderer12org/crypto/tls/server.crt
+          ServerTLSCert: >-
+            /home/riyaz/Documents/network1/orderer12org-root-ca/orderer3-orderer12org/crypto/tls/server.crt
+        - Host: orderer4-orderer12org
+          Port: 7050
+          ClientTLSCert: >-
+            /home/riyaz/Documents/network1/orderer12org-root-ca/orderer4-orderer12org/crypto/tls/server.crt
+          ServerTLSCert: >-
+            /home/riyaz/Documents/network1/orderer12org-root-ca/orderer4-orderer12org/crypto/tls/server.crt
+      Addresses:
+        - orderer0-orderer12org:32051
+        - orderer1-orderer12org:32052
+        - orderer2-orderer12org:32053
+        - orderer3-orderer12org:32054
+        - orderer4-orderer12org:32055
+
+      Organizations:
+      - *orderer12org
+      Capabilities:
+          <<: *OrdererCapabilities
+    Application:
+        <<: *ApplicationDefaults
+        Organizations:
+        - <<: *orderer12org
+    Consortiums:
+        SampleConsortium:
+            Organizations:
+            - *org6
+                

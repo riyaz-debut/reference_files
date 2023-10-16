@@ -1,0 +1,2 @@
+// if err := database.Connector.Find(&org_signatures, " org_id = ? AND  signby_id = ?", id, 2).Error; err != nil {
+// if err := database.Connector.Table("org_signatures").Find(&org_signatures, "org_id = ?", id).Error; err != nil {

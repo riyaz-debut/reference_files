@@ -1,0 +1,81 @@
+======================Hyperledger fabric questions ===================
+====================How did we store data in hyperledger fabric=====================
+Private data collections consist of two primary parts:
+
+the actual private data; data is stored in a private database on the peer nodes of authorized organizations and is accessed from chaincode on these authorized peers; and
+a hash of that private data; endorsed, ordered, and written to the ledgers of every peer on the channel.
+
+Hyperledger fabric uses levelDB to store the Transaction log and the blockdata , The state database can be configured to store either in levelDB or an external database like couchDB.
+
+====================What database used in Hyperledger Fabric=========================
+Fabric supports two types of peer state databases. LevelDB is the default state database embedded in the peer node. LevelDB stores chaincode data as simple key-value pairs and only supports key, key range, and composite key queries.
+
+CouchDB is an optional, alternate state database that allows you to model data on the ledger as JSON and issue rich queries against data values rather than the keys. The CouchDB support also allows you to deploy indexes with your chaincode to make queries more efficient and enable you to query large datasets.
+
+================================Consensus=====================================
+A consensus algorithm is a procedure through which all the peers of the Blockchain network reach a common agreement about the present state of the distributed ledger.
+
+==================Why CouchDB?==================
+CouchDB – the ability to perform rich queries against JSON data
+
+======================Node questions ===================
+====================What is middleware=====================
+Middlewares:-
+Middleware has the access to the request object, responses object, and next, it can process the request before the server send a response.
+
+Middlewares in Express.Js are functions that run codes that can affect an Express.Js application, especially the requests and responses.
+
+==================== Advantages of using middleware ========================
+Middleware can process request objects multiple times before the server works for that request.
+Middleware can be used to add logging and authentication functionality.
+Middleware improves client-side rendering performance.
+Middleware is used for setting some specific HTTP headers.
+Middleware helps for Optimization and better performance.
+
+========================= Can we use multiple middleware in nodejs ========================
+Middlewares can be chained. We can use more than one middleware on an Express app instance, which means that we can use more than one middleware inside app.use() or app.METHOD(). We use a comma (,) to separate them.
+
+===================== What Socket.IO is ====================
+Socket.IO is a library that enables real-time, bidirectional and event-based communication between the browser and the server. It consists of:
+
+a Node.js server: Source | API
+a Javascript client library for the browser (which can be also run from Node.js)
+
+======================= How to connect database in nodejs application ==========================
+To create a database in MongoDB, start by creating a MongoClient object, then specify a connection URL with the correct ip address and the name of the database you want to create.
+
+MongoDB will create the database if it does not exist, and make a connection to it.
+
+Important: In MongoDB, a database is not created until it gets content!
+
+MongoDB waits until you have created a collection (table), with at least one document (record) before it actually creates the database (and collection).
+
+=============== mongo collection ===============
+A collection in MongoDB is the same as a table in MySQL
+
+To create a collection in MongoDB, use the createCollection() method:
+
+============= How we can use update collection in mongoDB ==================
+db.collection.updateOne()
+Updates a single document within the collection based on the filter.
+
+db.collection.updateMany()
+Updates all documents that match the specified filter for a collection.
+
+db.collection.replaceOne()
+Replaces a single document within the collection based on the filter.
+
+=============== Redis ==================
+Redis
+The open source, in-memory data store used by millions of developers as a database, cache, streaming engine, and message broker.
+
+=============== Callback hell ===============
+Callback hell in Node. js is the situation in which we have complex nested callbacks. In this, each callback takes arguments that have been obtained as a result of previous callbacks. This kind of callback structure leads to lesser code readability and maintainability.
+
+=============== Buffer class in node js ===============
+Node provides Buffer class which provides instances to store raw data similar to an array of integers but corresponds to a raw memory allocation outside the V8 heap.
+
+Buffer class is a global class that can be accessed in an application without importing the buffer module.
+
+================ What Socket.IO is =================
+Socket.IO is a library that enables low-latency, bidirectional and event-based communication between a client and a server.

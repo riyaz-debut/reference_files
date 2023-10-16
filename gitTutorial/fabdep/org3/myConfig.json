@@ -1,0 +1,56 @@
+{
+    "name": "org3",
+    "version": "1.0.0",
+    "client": {
+      "organization": "org3",
+      "connection": {
+        "timeout": {
+          "peer": {
+            "endorser": "3000"
+          },
+          "orderer": "3000"
+        }
+      }
+    },
+    "organizations": {
+      "org3": {
+        "mspid": "org3msp",
+        "peers": [],
+        "certificateAuthorities": [
+          "ca-root"
+        ]
+      }
+    },
+    "orderers": {
+      "orderer0-orderer2org": {
+        "url": "grpcs://52.0.113.147:32011",
+        "grpcOptions": {
+          "ssl-target-name-override": "orderer0-orderer2org",
+          "grpc.keepalive_timeout_ms": 3000
+        },
+        "tlsCACerts": {
+          "path": "/home/riyaz/Documents/network1/orderer2org-ca-root/orderer0-orderer2org/crypto/msp/tlscacerts/tlsca.pem"
+        }
+      }
+    },
+    "channels": {
+      "mychannel2": {
+        "orderers": [
+          "orderer0-orderer2org"
+        ],
+        "peers": {}
+      }
+    },
+    "certificateAuthorities": {
+      "ca-root": {
+        "url": "https://52.0.113.147:8054",
+        "caName": "ca-root",
+        "tlsCACerts": {
+          "path": "/home/riyaz/Documents/network1/ca-root/tls-cert.pem"
+        },
+        "httpOptions": {
+          "verify": false
+        }
+      }
+    }
+  }

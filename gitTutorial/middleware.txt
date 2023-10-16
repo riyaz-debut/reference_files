@@ -1,0 +1,38 @@
+//////////////////////////////////////////////////////////////////////////////////////////////
+	// return func(c *gin.Context) {
+	// 	receivedToken := c.Request.Header.Get("Authorization")
+	// 	if len(strings.Split(receivedToken, " ")) == 2 {
+	// 		receivedToken = strings.Split(receivedToken, " ")[1]
+	// 	}
+	// 	log.Println("received token inside client middleware from client", receivedToken)
+	// 	err := token.TokenValid(receivedToken)
+	// 	if err != nil {
+	// 		c.String(http.StatusUnauthorized, "Find unauthorized token in middleware check at client side")
+	// 		c.Abort()
+	// 		return
+	// 	}
+	// 	c.Next()
+	// }
+
+	/////////////////////////////////////////////////////////////////////////////////////////////
+
+	// return gin.HandlerFunc(func(c *gin.Context) {
+	// 	receivedToken := c.Request.Header.Get("Authorization")
+	// 	if len(strings.Split(receivedToken, " ")) == 2 {
+	// 		receivedToken = strings.Split(receivedToken, " ")[1]
+	// 	}
+	// 	log.Println("received token inside client middleware from client", receivedToken)
+	// 	err := token.TokenValid(receivedToken)
+	
+	// 	response := utils.Response{
+	// 		Status:  500,
+	// 		Message: "Find unauthorized token in middleware check at client side",
+	// 		Err:     err,
+	// 	}
+	// 	if err != nil {
+	// 		c.JSON(http.StatusUnauthorized, response)
+	// 	} 
+	// 	c.Next()
+	// })
+
+

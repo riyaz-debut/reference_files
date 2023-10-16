@@ -1,0 +1,68 @@
+// ccId = release.CC_ID
+	// log.Println("cc id in enable controller: ", ccId)
+
+	// ccSequence := release.Sequence
+	// log.Println("sequence no in enable controller: ", ccSequence)
+
+	// type ChaincodeLog struct {
+	// 	Id        int       `json:"id" gorm:"primary key;autoincrement"`
+	// 	CcId      int       `json:"cc_id"`
+	// 	Name      string    `json:"name"`
+	// 	Label     string    `json:"label"`
+	// 	Version   string    `json:"version"`
+	// 	Sequence  int       `json:"sequence"`
+	// 	OrgId     int       `json:"org_id"`
+	// 	OrgName   string    `json:"org_name"`
+	// 	OrgMsp    string    `json:"msp_id"`
+	// 	CreatedAt time.Time `json:"created_at"`
+	// 	UpdatedAt time.Time `json:"updated_at" gorm:"autoUpdateTime"`
+	// }
+
+	// var ccLogs []ChaincodeLog
+
+	// if err := database.Connector.Table("chaincode_logs").Find(&ccLogs).Error; err != nil {
+
+	// 	response := utils.Response{
+	// 		Status:  500,
+	// 		Message: "cclogs data not found",
+	// 		// Data: ,
+	// 		Err: err,
+	// 	}
+	// 	return response
+
+	// }
+
+	// log.Println("ccLogs data in admin controller: ", ccLogs)
+
+	// type Resultlogs struct {
+	// 	Id        int       `json:"id" gorm:"primary key;autoincrement"`
+	// 	CC_ID     int       `json:"cc_id"`
+	// 	Name      string    `json:"name"`
+	// 	Label     string    `json:"label"`
+	// 	Version   string    `json:"version"`
+	// 	Sequence  int       `json:"sequence"`
+	// 	Status    int       `json:"status"`
+	// 	Url       string    `json:"url"`
+	// 	OrgId     int       `json:"org_id"`
+	// 	OrgName   string    `json:"org_name"`
+	// 	CreatedAt time.Time `json:"created_at"`
+	// 	UpdatedAt time.Time `json:"updated_at" gorm:"autoUpdateTime"`
+	// }
+
+	// resultLogs := Resultlogs{}
+
+	// // db.Model(&User{}).Select("users.name, emails.email").Joins("left join emails on emails.user_id = users.id").Scan(&result{})
+	// // if err := database.Connector.Model(&ChaincodeUpdates{}).Select("chaincode_updates.id, chaincode_updates.cc_id, chaincode_logs.org_id, chaincode_logs.org_name").Joins("left join chaincode_logs on chaincode_logs.cc_id = chaincode_updates.cc_id AND chaincode_logs.sequence = chaincode_updates.sequence").Scan(&resultLogs).Error; err != nil {
+	
+	// if err := database.Connector.Model(&ChaincodeUpdates{}).Joins("left join chaincode_logs on chaincode_logs.cc_id = chaincode_updates.cc_id AND chaincode_logs.sequence = chaincode_updates.sequence").Scan(&resultLogs).Error; err != nil {
+	// 	response := utils.Response{
+	// 		Status:  500,
+	// 		Message: "cclogs data not found",
+	// 		// Data: ,
+	// 		Err: err,
+	// 	}
+	// 	return response
+
+	// }
+
+	// log.Println("resultLogs data in admin controller: ", resultLogs)

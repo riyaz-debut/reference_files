@@ -1,0 +1,8 @@
+/home/riyaz/fabric-samples/test-network
+/home/riyaz/fabric-samples/test-network/../bin:/home/riyaz/.nvm/versions/node/v12.22.12/bin:/home/riyaz/.krew/bin:/home/riyaz/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/usr/local/go/bin:/home/riyaz/fabric-samples/bin
+
+
+
+
+/home/riyaz
+/home/riyaz/fabric-samples/bin:/home/riyaz/.nvm/versions/node/v12.22.12/bin:/home/riyaz/.krew/bin:/home/riyaz/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/usr/local/go/bin:/home/riyaz/fabric-samples/bin

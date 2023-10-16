@@ -1,0 +1,9 @@
+"{"selector":{"doc_type":"%s"%s%s%s%s%s}}", utils.DocTypeCompany, queryCountry, queryBrokerDealerID, queryIndustryID, querySubIndustryID, queryCompanyName)
+
+
+queryAtsOperator := fmt.Sprintf("{"ats_operators":{"$elemMatch":{"$eq":"%s"}}}", companyFilter.RequestorID)
+queryBrokerDealer := fmt.Sprintf("{"broker_dealers":{"$elemMatch":{"$eq":"%s"}}}", companyFilter.RequestorID)
+queryTransferAgent := fmt.Sprintf("{"transfer_agent_id":"%s"}", companyFilter.RequestorID)
+queryServiceProvider := fmt.Sprintf("{"service_providers":{"$elemMatch":{"$eq":"%s"}}}", companyFilter.RequestorID)
+
+"{"selector" : {"doc_type:""}}"

@@ -1,0 +1,180 @@
+Today's update
+I have read about Blockchain Network, MSP, peers, Applications and Peers, Peers and Channel and continuing with oredring service
+
+============================introduction of Blockchain====================================
+
+In general terms, a blockchain is an immutable transaction ledger, maintained within a distributed 
+network of peer nodes. These nodes each maintain a copy of the 
+ledger by applying transactions that have been validated by a 
+consensus protocol, grouped into blocks that include a hash that 
+bind each block to the preceding block.
+
+==============================Hyperledger Fabric========================================
+
+Hyperledger Fabric is an open source enterprise-grade permissioned 
+distributed ledger technology (DLT) platform, designed for use in
+enterprise contexts, that delivers some key differentiating 
+capabilities over other popular distributed ledger or blockchain 
+platforms.
+
+==============================key-difference===============================
+
+One key point of differentiation is that Hyperledger was 
+established under the Linux Foundation, which itself has a long 
+and very successful history of nurturing open source projects 
+under open governance that grow strong sustaining communities and 
+thriving ecosystems.
+
+Fabric has a highly modular and configurable architecture, enabling 
+innovation, versatility and optimization for a broad range of industry 
+use cases including banking, finance, insurance, healthcare, 
+human resources, supply chain and even digital music delivery.
+
+permissioned:permissioned, meaning that, unlike with a public 
+permissionless network, the participants are known to each other, 
+rather than anonymous and therefore fully untrusted.
+
+pluggable consensus protocols: that enable the platform to be more 
+effectively customized to fit particular use cases and trust models.
+
+do not require a native cryptocurrency: to incent costly mining or to fuel 
+smart contract execution.
+
+==============================Modularity===================================
+refers to a system's ability to be broken down into components which can 
+be separated and recombined.
+
+====================Permissioned vs Permissionless Blockchains:============
+
+In a permissionless blockchain, virtually anyone can participate, and 
+every participant is anonymous.
+
+Permissioned blockchains, on the other hand, operate a blockchain amongst 
+a set of known, identified and often vetted participants operating under 
+a governance model that yields a certain degree of trust.
+
+===============================Privacy and Confidentiality====================
+Hyperledger Fabric, being a permissioned platform, enables confidentiality 
+through its channel architecture and private data feature. In channels, 
+participants on a Fabric network establish a sub-network where every 
+member has visibility to a particular set of transactions. 
+
+
+=============================BLOCKCHAIN-NETWORK=================================
+
+
+Blockchain network:
+1). A blockchain network is a technical infrastructure that provides ledger and smart contract (chaincode) services to applications.
+2). smart contracts are used to generate transactions which are subsequently distributed to every peer node in the network where they 
+are immutably recorded on their copy of the ledger. 
+
+Creating the Network:
+1). First we need a network N
+2). Then we need an organization to intiate the network R4
+3). Next we need an orderer and peer to create the network but it will need some configuration file that includes details like no. of 
+organization, no. of nodes, channel etc.
+4). So we create a network-configuration file (NC4)
+5). After that we take orderer(O4).
+6). Next we need certificate authority to intiate network (CA4)
+7). We add Network Administrators to allow organization R1 users to administer the network
+8). Organization R4 updates the network configuration to make organization R1 an administrator too. After this point R1 and R4 have equal 
+rights over the network configuration
+9). Certificate authority CA1 has been added – it can be used to identify users from the R1 organization. 
+
+10). Defining a Consortium:- 
+consortium defines the set of organizations in the network who share a need to transact with one another – in 
+this case R1 and R2. It really makes sense to group organizations together if they have a common goal
+
+11). Creating a channel for a consortium:- 
+Channels are useful because they provide a mechanism for private communications and private data between the members of a consortium.. 
+There can be multiple channels in a network.
+(note that a channel can have any number of organizations connected to it)
+
+12). Peers and Ledgers:- (a). Peer nodes are the network components where copies of the blockchain ledger are hosted.
+    (b). P1’s purpose in the network is purely to host a copy of the ledger L1 for others to access.
+    (c). We can think of L1 as being physically hosted on P1, but logically hosted on the channel C1. 
+    (d). P1 and O4 can communicate with each other using channel C1.
+
+13). Applications and Smart Contract chaincode:
+a). we can start connecting client applications to consume some of the services provided by workhorse 
+of the ledger, the peer
+b). client application A1 is associated with organization R1; and although it is outside the Fabric 
+blockchain network, it is connected to it via the channel C1
+Installing a chaincode package:- an administrator in organization R1 must create a chaincode package and install it onto peer node P1.
+
+===Defining a chaincode=== 
+organizations need to approve a chaincode definition (A majority, by default) before the chaincode definition can be committed to the 
+channel and used to interact with the channel ledger. 
+
+===Endorsement policy=== 
+It describes which organizations must approve transactions before they will be accepted by other organizations onto their copy of the 
+ledger. In our sample network, transactions can only be accepted onto ledger L1 if R1 or R2 endorse them.
+
+===Invoking a smart contract=== 
+sOnce a smart contract has been installed on a peer node and defined on a channel it can be invoked by a client 
+application. Client applications do this by sending transaction proposals to peers owned by the organizations specified by the smart 
+contract endorsement policy.
+
+
+===========================Certificate Authorities:======================================
+1). Certificate Authority, CA4, which is used to issue certificates to administrators and network nodes. 
+2). CA4 plays a key role in our network because it dispenses X.509 certificates that can be used to identify components as belonging to 
+organization R4.
+
+=============================What is an Identity?=======================================
+The different actors in a blockchain network include peers, orderers, client applications, administrators and more. Each of these actors 
+— active elements inside or outside a network able to consume services — has a digital identity encapsulated in an X.509 digital 
+certificate. These identities really matter because they determine the exact permissions over resources and access to information that 
+actors have in a blockchain network.
+
+====================================Use of an Identity:======================================
+Having a valid credit card is not enough — it must also be accepted by the store! 
+PKIs and MSPs work together in the same way — a PKI provides a list of identities, and an MSP says which of these are members of a given 
+organization that participates in the network.
+
+A PKI is like a card provider, An MSP, on the other hand, is like the list of card providers accepted by the store
+
+=====================================What are PKIs?==============================================
+the elements of Public Key Infrastructure (PKI). A PKI is comprised of Certificate Authorities who issue digital certificates to parties 
+(e.g., users of a service, service provider), who then use them to authenticate themselves in the messages they exchange in their 
+environment.
+
+================================Digital Certificates=================================================
+A digital certificate is a document which holds a set of attributes relating to the certificate holder. The most common type of 
+certificate is the one compliant with the X.509 standard, which allows the encoding of a party’s identifying details in its structure.
+
+==============================Certificate Authorities:==========================================
+every node is able to participate in the blockchain network, via the means of a digital identity issued for it by an authority trusted by 
+the system. In the most common case, digital identities (or simply identities) have the form of cryptographically validated digital 
+certificates that comply with X.509 standard and are issued by a Certificate Authority (CA).
+
+Certificate Authorities issue identities by generating a public and private key which forms a key-pair that can be used to prove identity. 
+
+==============================Why do I need an MSP?========================================
+Because Fabric is a permissioned network, blockchain participants need a way to prove their identity to the rest of the network in order 
+to transact on the network. 
+
+==============================What is an MSP?==============================================
+The MSP identifies which Root CAs and Intermediate CAs are accepted to define the members of a trust domain by listing the identities of 
+their members, or by identifying which CAs are authorized to issue valid identities for their members.
+
+==============================MSP domains==================================================
+Locally on an actor’s node (local MSP): Local MSPs are defined for clients and for nodes (peers and orderers).
+
+In channel configuration (channel MSP): channel MSPs define administrative and participatory rights at the channel level
+
+===============================Peers=========================================
+Peers are a fundamental element of the network because they host ledgers and smart contracts.
+A peer hosts instances of ledgers and instances of chaincodes
+
+==============================Channels======================================
+Channels allow a specific set of peers and applications to communicate with each other within a blockchain network. 
+
+==============================Orderers======================================
+Orderer is responsible for packaging transactions into Blocks, and distribute them to Anchor Peers across the network
+
+==============================chaincode=====================================
+Chaincode is a program, written in Go, Node.js that handles business logic agreed to by members of the network. A chaincode can be invoked to update or query the ledger in a proposal transaction. chaincode is used to initialize a ledger with assets, create, read, update, and delete assets.
+
+==============================Concurrency Control Version Check==============
+If the transaction has changed between execution time and commit time, then a Concurrency Control Version Check violation has occurred, and the transaction is marked as invalid on the ledger and values are not updated in the state database.

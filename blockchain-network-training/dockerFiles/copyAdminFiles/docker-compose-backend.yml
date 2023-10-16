@@ -1,0 +1,27 @@
+version: "3.8"
+services:
+  admin_app:
+    container_name: admin-dev
+    image: admin-dev
+    restart: always
+    build:
+      context: .
+      target: development
+    # volumes:
+    #   - .:/admin_app
+    ports:
+      - 5000:5000
+
+# services:
+#   osqo_sdk:
+#     container_name: osqo-sdk
+#     image: "node:16.16.0"
+#     image: osqo-sdk-docker
+#     restart: always
+#     command: npm start
+#     volumes:
+#       - .:/hyperledger-sdk
+#     ports:
+#       - 3000:3000
+
+ 

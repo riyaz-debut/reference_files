@@ -1,0 +1,19 @@
+
+service: my-service
+plugins:
+  - serverless-localstack
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: dev
+
+functions:
+  hello:
+    handler: handler.hello
+    events:
+      - http: ANY /{proxy+}
+      - http: ANY /
+   
+  
+    

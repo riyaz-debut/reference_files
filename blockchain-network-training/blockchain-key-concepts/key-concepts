@@ -1,0 +1,118 @@
+Blocks:
+1. Blocks are ordered set of transactions
+2. Block created by ordering services and validated by peers.
+
+Chain:
+1. Transactions log structured as hash-linked block of transactions
+
+Peers:
+1. A blockchain network is comprised primarily of a set of peer nodes (or, simply, peers). 
+2. Peers are a fundamental element of the network because they host ledgers and smart contracts.
+
+Anchor Peer:
+1. A peer node on a channel that all other peers can discover and communicate with them. 
+2. Each Member on a channel has an anchor peer allowing for peers belonging to different Members to discover all existing peers on a channel.
+
+Ledger:
+1. A series (or chain) of blocks on which transaction details are recorded after suitable authentication and verification by the designated network participants
+
+Chaincode:
+1. Business logic in the form of executable program(CRUD) through which we can interact with data on blockchain ledger
+
+Channel:
+1. A channel is a private communication pathway between two or more members of a Hyperledger Fabric network on Amazon Managed Blockchain
+
+Concurrency Control Version Check:
+1. Method of keeping ledger state in sync across peers on a channel.
+
+Consensus:
+1. Procedure in which the peers of a Blockchain network reach agreement about the present state of the data in the network.
+2. No single node can hold the control of network of blockchain
+
+Consentor Set:
+1. Ordering nodes that are actively participating in the consensus mechanism on a channel.
+
+Technology Behind Blockchain:
+1. The Data Structure: Distributed ledger
+2. Cryptography and Digital signature: Ensure security and temper proof architecture of the entire blockchain
+3. The Consensus: over a permission-less environment
+4. The Economy of the Revenue Model: Encourage participants to join in the mining procedure and validate the block
+
+Types of blockchain:
+
+Public: 
+1. Public blockchains are open networks that allow anyone to participate in the network
+2. Public blockchains is permissionless
+3. In public blockchain anyone can join the network and read, write, or participate within the blockchain. 
+4. Public blockchain is decentralized and does not have a single entity which controls the network.
+
+Private:
+1. Private blockchain is managed by a network administrator and participants need consent to join the network
+2. Private blockchain is a permissioned blockchain
+3. There are one or more entities which control the network
+4. In public blockchain only entity participating in the transaction have knowledge about the transaction
+
+Key-difference in both types:
+1. Security –
+Public: Due to the higher number of nodes in the network, it is nearly impossible for ‘bad actors’ to attack the system and gain control over the consensus network.
+
+Private: A private blockchain is more prone to hacks, risks, and data breaches/ manipulation. It is easy for bad actors to endanger the entire network. Hence, it is less secure.
+
+Permissioned Blockchain:
+
+1. Permissioned blockchain is a distributed ledger that is not publicly accessible. 
+2. It can only be accessed by users with permissions. 
+3. The users can only perform specific actions granted to them by the ledger administrators
+4. The users are required to identify themselves through certificates or other digital means.
+
+Difference Between and Permissioned and Private Blockchain?:
+
+1. A private blockchain is one in which only specific users have access and abilities and is generally used only by the entity it belongs to.
+2. A permissioned blockchain is a hybrid of public and private blockchains where multiple users are given permissions and abilities.
+
+Properties of cryptographic hash functions:
+1. Collision-free: If two messages are different then there digest(hash value computed by hash function) also differs.
+2. Hiding: Hide the original message(One way function)
+3. Puzzle-Friendly: Two messages are given like X,Y and we have to compute value of k 
+
+SHA 256:
+1. Secure hash algorithm(SHA) that generates 256 bit message digest
+
+Digital Signature:
+1. A digital code which can be included with an electronically transmitted document to verify
+
+Public key cryptography:
+
+We have two method:
+
+1. Encryption:The key is used to convert a plain text to cypher text
+2. Decryption:The key is used to convert cypher text to a original plain text
+
+We have two types of key:(crosscheck)
+
+1. Public key: encrypt the message
+2. Private key: decrypt the message
+
+Use private key to sign the message
+Use public key to verify the message
+
+
+
+
+127.0.0.1   orderer0.bcp.osqo.com
+127.0.0.1   orderer0.broker.osqo.com
+127.0.0.1   orderer0.esp.osqo.com 
+127.0.0.1   orderer0.osqo.osqo.com 
+127.0.0.1   peer0.bcp.osqo.com 
+127.0.0.1   peer0.broker.osqo.com
+127.0.0.1   peer0.esp.osqo.com
+127.0.0.1   peer0.osqo.osqo.com 
+127.0.0.1   peer1.bcp.osqo.com 
+127.0.0.1   peer1.broker.osqo.com
+127.0.0.1   peer1.esp.osqo.com
+127.0.0.1   peer1.osqo.osqo.com 
+
+
+
+
+

@@ -1,0 +1,71 @@
+Using signature and modified config at the time of joining channel getting this error
+
+Admin side error:
+create channel failed: create channel failed: SendEnvelope failed: calling orderer 'localhost:7050' failed: Orderer Server Status Code: (400) BAD_REQUEST. Description: error applying config update to existing channel 'mychannel': error authorizing update: error validating DeltaSet: policy for [Group]  /Channel/Application not satisfied: implicit policy evaluation failed - 0 sub-policies were satisfied, but this policy requires 2 of the 'Admins' sub-policies to be satisfied
+
+Orderer logs
+
+invalid identity: certificate subject=CN=org1admin,OU=admin serialnumber=626312017092956947705847104744931695912835318011 error="the supplied identity is not valid: x509: certificate signed by unknown authority"
+
+
+1: signature for identity 0 is invalid: The signature is invalid
+2022-07-26 05:54:48.495 UTC [policies] SignatureSetToValidIdentities -> WARN 074 signature for identity 1 is invalid: The signature is invalid
+2022-07-26 05:54:48.495 UTC [policies] SignatureSetToValidIdentities -> WARN 075 signature for identity 0 is invalid: The signature is invalid
+2022-07-26 05:54:48.496 UTC [policies] SignatureSetToValidIdentities -> WARN 076 signature for identity 1 is invalid: The signature is invalid
+2022-07-26 05:54:48.496 UTC [orderer.common.broadcast] ProcessMessage -> WARN 077 [channel: mychannel] Rejecting broadcast of config message from 172.18.0.1:56034 because of error: error applying config update to existing channel 'mychannel': error authorizing update: error validating DeltaSet: policy for [Group]  /Channel/Application not satisfied: implicit policy evaluation failed - 0 sub-policies were satisfied, but this policy requires 2 of the 'Admins' sub-policies to be satisfied
+2022-07-26 05:54:48.496 UTC [comm.grpc.server] 1 -> INFO 078 streaming call completed grpc.service=orderer.AtomicBroadcast grpc.method=Broadcast grpc.request_deadline=2022-07-26T05:56:48.493Z grpc.peer_address=172.18.0.1:56034 grpc.code=OK grpc.call_duration=2.331994ms
+
+
+Peer logs
+Got error while attempting to receive blocks: received bad status SERVICE_UNAVAILABLE from orderer channel=mychannel orderer-address=orderer.example.com:7050
+
+Again generate certificate and try again to join channel getting same error 
+
+Admin side error:
+create channel failed: create channel failed: SendEnvelope failed: calling orderer 'localhost:7050' failed: Orderer Server Status Code: (400) BAD_REQUEST. Description: error applying config update to existing channel 'mychannel': error authorizing update: error validating DeltaSet: policy for [Group]  /Channel/Application not satisfied: implicit policy evaluation failed - 0 sub-policies were satisfied, but this policy requires 2 of the 'Admins' sub-policies to be satisfied
+
+Orderer logs
+1: signature for identity 0 is invalid: The signature is invalid
+2022-07-26 05:54:48.495 UTC [policies] SignatureSetToValidIdentities -> WARN 074 signature for identity 1 is invalid: The signature is invalid
+2022-07-26 05:54:48.495 UTC [policies] SignatureSetToValidIdentities -> WARN 075 signature for identity 0 is invalid: The signature is invalid
+2022-07-26 05:54:48.496 UTC [policies] SignatureSetToValidIdentities -> WARN 076 signature for identity 1 is invalid: The signature is invalid
+2022-07-26 05:54:48.496 UTC [orderer.common.broadcast] ProcessMessage -> WARN 077 [channel: mychannel] Rejecting broadcast of config message from 172.18.0.1:56034 because of error: error applying config update to existing channel 'mychannel': error authorizing update: error validating DeltaSet: policy for [Group]  /Channel/Application not satisfied: implicit policy evaluation failed - 0 sub-policies were satisfied, but this policy requires 2 of the 'Admins' sub-policies to be satisfied
+2022-07-26 05:54:48.496 UTC [comm.grpc.server] 1 -> INFO 078 streaming call completed grpc.service=orderer.AtomicBroadcast grpc.method=Broadcast grpc.request_deadline=2022-07-26T05:56:48.493Z grpc.peer_address=172.18.0.1:56034 grpc.code=OK grpc.call_duration=2.331994ms
+
+
+Peer logs
+Got error while attempting to receive blocks: received bad status SERVICE_UNAVAILABLE from orderer channel=mychannel orderer-address=orderer.example.com:7050
+
+Trying to join channel with providing one signature
+
+Error:
+create channel failed: create channel failed: SendEnvelope failed: calling orderer 'localhost:7050' failed: Orderer Server Status Code: (400) BAD_REQUEST. Description: error applying config update to existing channel 'mychannel': error authorizing update: error validating DeltaSet: policy for [Group]  /Channel/Application not satisfied: implicit policy evaluation failed - 0 sub-policies were satisfied, but this policy requires 2 of the 'Admins' sub-policies to be satisfied
+
+Orderer logs
+2022-07-26 05:54:48.495 UTC [policies] SignatureSetToValidIdentities -> WARN 075 signature for identity 0 is invalid: The signature is invalid
+
+Now trying to add genesisBlock logic that is exist in fabric-go-sdk
+
+
+/////////////////////////////////////////////////////////////
+
+peer channel update -f channel-artifacts/org3_update_in_envelope.pb -c mychannel -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile "${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem"
+2022-07-28 14:55:48.861 IST [channelCmd] InitCmdFactory -> INFO 001 Endorser and orderer connections initialized
+Error: got unexpected status: BAD_REQUEST -- error applying config update to existing channel 'mychannel': error authorizing update: error validating DeltaSet: policy for [Group]  /Channel/Application not satisfied: implicit policy evaluation failed - 1 sub-policies were satisfied, but this policy requires 2 of the 'Admins' sub-policies to be satisfied
+
+
+
+
+MIICYjCCAgmgAwIBAgIUaotkMGClR3ie86yF4PcPHbEx36EwCgYIKoZIzj0EAwIw
+bDELMAkGA1UEBhMCVUsxEjAQBgNVBAgTCUhhbXBzaGlyZTEQMA4GA1UEBxMHSHVy
+c2xleTEZMBcGA1UEChMQb3JnMi5leGFtcGxlLmNvbTEcMBoGA1UEAxMTY2Eub3Jn
+Mi5leGFtcGxlLmNvbTAeFw0yMjA4MDkwOTIzMDBaFw0yMzA4MDkwOTI4MDBaMCQx
+DjAMBgNVBAsTBWFkbWluMRIwEAYDVQQDEwlvcmcyYWRtaW4wWTATBgcqhkjOPQIB
+BggqhkjOPQMBBwNCAATeYxLUi8/7Sa93E+NzjUk5IjXGWHYcnrpPPYmZrqv0nqHc
++WrnTlEACrIwoOGHg4cRX2UuT8gQpSbmLiFp7Yqko4HQMIHNMA4GA1UdDwEB/wQE
+AwIHgDAMBgNVHRMBAf8EAjAAMB0GA1UdDgQWBBTnrkvae41ESNWmqpfVpoLMLolM
+cjAfBgNVHSMEGDAWgBRBvMa7lvvztyIA0x3szoSMNz9QyjAQBgNVHREECTAHggVy
+aXlhejBbBggqAwQFBgcIAQRPeyJhdHRycyI6eyJoZi5BZmZpbGlhdGlvbiI6IiIs
+ImhmLkVucm9sbG1lbnRJRCI6Im9yZzJhZG1pbiIsImhmLlR5cGUiOiJhZG1pbiJ9
+fTAKBggqhkjOPQQDAgNHADBEAiA2P+LtsIFMd7gx98K+5TdNNkuVYPugXtfa6q4N
+1AemCwIgA8HxKLVTVPKc4uHkbkKvn3UtBAt3svJ+zpsDvMkjz2M=

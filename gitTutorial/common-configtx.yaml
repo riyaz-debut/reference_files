@@ -1,0 +1,208 @@
+# ========================= orderer config ===================================
+
+Profiles:
+  MultiNodeEtcdRaft:
+    Application:
+      Capabilities:
+        V2_0: true
+      Organizations:
+        - Name: orderer8org
+          ID: orderer8msp
+          MSPDir: /home/riyaz/Documents/network1/orderer8org-root-ca/msp
+          Policies:
+            Readers:
+              Type: Signature
+              Rule: OR('orderer8msp.member')
+            Writers:
+              Type: Signature
+              Rule: OR('orderer8msp.member')
+            Admins:
+              Type: Signature
+              Rule: OR('orderer8msp.admin')
+          OrdererEndpoints:
+            - orderer0.orderer8org.com:32031
+            - orderer1.orderer8org.com:32032
+            - orderer2.orderer8org.com:32033
+            - orderer3.orderer8org.com:32034
+            - orderer4.orderer8org.com:32035
+
+      Policies:
+        Readers:
+          Type: ImplicitMeta
+          Rule: ANY Readers
+        Writers:
+          Type: ImplicitMeta
+          Rule: ANY Writers
+        Admins:
+          Type: ImplicitMeta
+          Rule: MAJORITY Admins
+        LifecycleEndorsement:
+          Type: ImplicitMeta
+          Rule: MAJORITY Endorsement
+        Endorsement:
+          Type: ImplicitMeta
+          Rule: MAJORITY Endorsement
+    Consortiums:
+      SampleConsortium:
+        Organizations:
+          - Name: org4msp
+            ID: org4msp
+            MSPDir: /home/riyaz/Documents/network1/org4-root-ca/msp
+            Policies:
+              Readers:
+                Type: Signature
+                Rule: OR("org4msp.admin", "org4msp.peer", "org4msp.client")
+              Writers:
+                Type: Signature
+                Rule: OR("org4msp.admin", "org4msp.client")
+              Admins:
+                Type: Signature
+                Rule: OR("org4msp.admin")
+    Capabilities:
+      V2_0: true
+    Orderer:
+      Addresses:
+        - orderer0.orderer8org.com:32031
+        - orderer1.orderer8org.com:32032
+        - orderer2.orderer8org.com:32033
+        - orderer3.orderer8org.com:32034
+        - orderer4.orderer8org.com:32035
+      BatchSize:
+        MaxMessageCount: 10
+        AbsoluteMaxBytes: 99 MB
+        PreferredMaxBytes: 512 KB
+      BatchTimeout: 2s
+      Capabilities:
+        V2_0: true
+      EtcdRaft:
+        Consenters:
+          - Host: orderer0.orderer8org.com
+            Port: 32031
+            ClientTLSCert: >-
+              /home/riyaz/Documents/network1/orderer8org-root-ca/orderer0-orderer8org/crypto/tls/server.crt
+            ServerTLSCert: >-
+              /home/riyaz/Documents/network1/orderer8org-root-ca/orderer0-orderer8org/crypto/tls/server.crt
+          - Host: orderer1.orderer8org.com
+            Port: 32032
+            ClientTLSCert: >-
+              /home/riyaz/Documents/network1/orderer8org-root-ca/orderer1-orderer8org/crypto/tls/server.crt
+            ServerTLSCert: >-
+              /home/riyaz/Documents/network1/orderer8org-root-ca/orderer1-orderer8org/crypto/tls/server.crt
+          - Host: orderer2.orderer8org.com
+            Port: 32033
+            ClientTLSCert: >-
+              /home/riyaz/Documents/network1/orderer8org-root-ca/orderer2-orderer8org/crypto/tls/server.crt
+            ServerTLSCert: >-
+              /home/riyaz/Documents/network1/orderer8org-root-ca/orderer2-orderer8org/crypto/tls/server.crt
+          - Host: orderer3.orderer8org.com
+            Port: 32034
+            ClientTLSCert: >-
+              /home/riyaz/Documents/network1/orderer8org-root-ca/orderer3-orderer8org/crypto/tls/server.crt
+            ServerTLSCert: >-
+              /home/riyaz/Documents/network1/orderer8org-root-ca/orderer3-orderer8org/crypto/tls/server.crt
+          - Host: orderer4.orderer8org.com
+            Port: 32035
+            ClientTLSCert: >-
+              /home/riyaz/Documents/network1/orderer8org-root-ca/orderer4-orderer8org/crypto/tls/server.crt
+            ServerTLSCert: >-
+              /home/riyaz/Documents/network1/orderer8org-root-ca/orderer4-orderer8org/crypto/tls/server.crt
+        Options:
+          TickInterval: 500ms
+          ElectionTick: '10'
+          HeartbeatTick: '1'
+          MaxInflightBlocks: '5'
+          SnapshotIntervalSize: 16 MB
+      OrdererType: etcdraft
+      Organizations:
+        - Name: orderer8org
+          ID: orderer8msp
+          MSPDir: /home/riyaz/Documents/network1/orderer8org-root-ca/msp
+          Policies:
+            Readers:
+              Type: Signature
+              Rule: OR('orderer8msp.member')
+            Writers:
+              Type: Signature
+              Rule: OR('orderer8msp.member')
+            Admins:
+              Type: Signature
+              Rule: OR('orderer8msp.admin')
+          OrdererEndpoints:
+            - orderer0.orderer8org.com:32031
+            - orderer1.orderer8org.com:32032
+            - orderer2.orderer8org.com:32033
+            - orderer3.orderer8org.com:32034
+            - orderer4.orderer8org.com:32035
+      Policies:
+        Readers:
+          Type: ImplicitMeta
+          Rule: ANY Readers
+        BlockValidation:
+          Type: ImplicitMeta
+          Rule: ANY Writers
+        Writers:
+          Type: ImplicitMeta
+          Rule: ANY Writers
+        Admins:
+          Type: ImplicitMeta
+          Rule: MAJORITY Admins
+    Policies:
+      Readers:
+        Type: ImplicitMeta
+        Rule: ANY Readers
+      Writers:
+        Type: ImplicitMeta
+        Rule: ANY Writers
+      Admins:
+        Type: ImplicitMeta
+        Rule: MAJORITY Admins
+
+
+
+# =========================== channel config ===================================
+
+Profiles:
+  OrgsChannel:
+    Consortium: SampleConsortium
+    Policies:
+      Readers:
+        Type: ImplicitMeta
+        Rule: ANY Readers
+      Writers:
+        Type: ImplicitMeta
+        Rule: ANY Writers
+      Admins:
+        Type: Signature
+        Rule: AND("org4msp.admin")
+    Capabilities:
+      V2_0: true
+    Application:
+      Organizations:
+        - Name: org4msp
+          ID: org4msp
+          MSPDir: /home/riyaz/Documents/network1/org4-root-ca/msp
+          Policies:
+            Readers:
+              Type: Signature
+              Rule: OR("org4msp.admin", "org4msp.peer", "org4msp.client")
+            Writers:
+              Type: Signature
+              Rule: OR("org4msp.admin", "org4msp.client")
+            Admins:
+              Type: Signature
+              Rule: OR("org4msp.admin")
+          AnchorPeers:
+            - Host: peer0-org4
+              Port: 31027
+      Policies:
+        Readers:
+          Type: ImplicitMeta
+          Rule: ANY Readers
+        Writers:
+          Type: ImplicitMeta
+          Rule: ANY Writers
+        Admins:
+          Type: Signature
+          Rule: AND("org4msp.admin")
+      Capabilities:
+        V2_0: true

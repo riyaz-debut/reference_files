@@ -1,0 +1,32 @@
+#========================= Add new organization =============================#
+#========================= New org to join channel =============================#
+
+Step:1 Fetch the most recent config block for the existing channel
+
+Step:2 Decode the channel configuration block into JSON format using configtxlator proto_decode. It gives us  config.json – which will serve as the baseline for our config update
+
+Step:3 Append the Org configuration definition – org.json – to the channel’s application groups field using jq tool, and name the output – modified_config.json
+
+Step:4 Translate config.json back into a protobuf called config.pb using configtxlator proto_encode
+
+Step:5 Encode modified_config.json to modified_config.pb
+
+Step:6 Now calculate the delta between these two config protobufs using configtxlator compute_update. This will output a new protobuf binary named org_update.pb
+
+Step:7 Decode this object into editable JSON format and call it org3_update.json
+
+Step:8 Now, we have a decoded update file – org3_update.json – that we need to wrap in an envelope message. this step will give us back the header field that we stripped away earlier. We’ll name this file org_update_in_envelope.json
+
+Step:9 Convert it into the fully fledged protobuf format that Fabric requires. We’ll name our final update object org_update_in_envelope.pb
+
+Step:10 Sign the update as existing organizations
+
+Step:11 Now fetch the updated config block for the channel
+
+Step:12 Now join the new org peer to the channel using updated channel block
+
+#========================= New org to use existing chaincode =============================#
+
+1: Add new org in an existing channel with a chaincode already defined on it 
+2: We have to installed the chaincode package that is already been committed to the channel
+3: Approve the chaincode definition 

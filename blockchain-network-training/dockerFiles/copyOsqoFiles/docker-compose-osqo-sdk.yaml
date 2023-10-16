@@ -1,0 +1,43 @@
+version: "3.8"
+services:
+  osqo_sdk:
+    container_name: osqo-sdk
+    # image: osqo-sdk-docker
+    image: node:16.16.0
+    restart: always
+    volumes:
+      - ./:/hyperledger-sdk2
+      # - /hyperledger-sdk/node_modules
+      - node_modules:/hyperledger-sdk/node_modules
+
+    # build: 
+    #   context: .
+    command: sh -c "cd /hyperledger-sdk2/ && npm install && npm start"
+
+    # command: npm install
+    # command: npm start
+    ports:
+      - 3000:3000
+
+    extra_hosts:       
+      # - orderer.osqo.com:13.210.137.148
+      # - orderer1.osqo.com:13.210.137.148
+      # - orderer2.osqo.com:13.210.137.148
+      # - orderer3.osqo.com:13.210.137.148
+      # - orderer4.osqo.com:13.210.137.148
+      # - orderer5.osqo.com:13.210.137.148 
+      # - peer0.bcp.osqo.com:13.210.137.148
+      # - peer1.bcp.osqo.com:13.210.137.148  
+      # - peer0.osqo.osqo.com:13.210.137.148
+      # - peer1.osqo.osqo.com:13.210.137.148 
+      # - peer0.broker.osqo.com:52.62.183.194         
+      # - peer1.broker.osqo.com:52.62.183.194 
+      # - peer0.esp.osqo.com:52.62.183.194  
+      # - peer1.esp.osqo.com:52.62.183.194
+      # - peer0.oregon:34.208.86.43
+      # - peer1.oregon:34.208.86.43 
+      - orderer.example.com:127.0.0.1
+      - peer0.org1.example.com:127.0.0.1
+      - peer0.org2.example.com:127.0.0.1
+      - peer0.org3.example.com:127.0.0.1
+      - ca_org1:127.0.0.1 

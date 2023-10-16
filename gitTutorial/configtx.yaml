@@ -1,0 +1,320 @@
+
+Organizations:
+
+   
+    - &Ordererxfarm
+   
+        Name: Ordererxfarm
+
+        # ID to load the MSP definition as
+        ID: ordererMSP
+
+        # MSPDir is the filesystem path which contains the MSP configuration
+        MSPDir: ../organizations/ordererOrganizations/xfarm.com/msp
+
+       
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('ordererMSP.member')"
+            Writers:
+                Type: Signature
+                Rule: "OR('ordererMSP.member')"
+            Admins:
+                Type: Signature
+                Rule: "OR('ordererMSP.admin')"
+
+
+    
+    - &Org1
+        
+        Name: org1MSP
+
+        # ID to load the MSP definition as
+        ID: org1MSP
+
+        MSPDir: ../organizations/peerOrganizations/org1.xfarm.com/msp
+
+       
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('org1MSP.admin', 'org1MSP.peer', 'org1MSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('org1MSP.admin', 'org1MSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('org1MSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('org1MSP.peer')"
+
+        AnchorPeers:
+            - Host: peer0.org1.xfarm.com
+              Port: 7051  
+
+    - &Org2
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: org2MSP
+
+        # ID to load the MSP definition as
+        ID: org2MSP
+
+        MSPDir: ../organizations/peerOrganizations/org2.xfarm.com/msp
+
+        # Policies defines the set of policies at this level of the config tree
+        # For organization policies, their canonical path is usually
+        #   /Channel/<Application|Orderer>/<OrgName>/<PolicyName>
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('org2MSP.admin', 'org2MSP.peer', 'org2MSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('org2MSP.admin', 'org2MSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('org2MSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('org2MSP.peer')"
+
+        AnchorPeers:
+            # AnchorPeers defines the location of peers which can be used
+            # for cross org gossip communication.  Note, this value is only
+            # encoded in the genesis block in the Application section context
+            - Host: peer0.org2.xfarm.com
+              Port: 9051                    
+
+################################################################################
+#
+#   SECTION: Capabilities
+
+################################################################################
+Capabilities:
+    Channel: &ChannelCapabilities
+        V2_0: true
+
+    Orderer: &OrdererCapabilities
+        V2_0: true
+
+    Application: &ApplicationCapabilities
+        V2_0: true
+
+################################################################################
+#
+#   SECTION: Application
+#
+################################################################################
+Application: &ApplicationDefaults
+
+    Organizations:
+
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+        LifecycleEndorsement:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Endorsement"
+        Endorsement:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Endorsement"
+
+    Capabilities:
+        <<: *ApplicationCapabilities
+################################################################################
+#
+#   SECTION: Orderer
+#
+################################################################################
+Orderer: &OrdererDefaults
+
+    # Orderer Type: The orderer implementation to start
+    OrdererType: etcdraft
+    
+    Addresses:
+        - orderer.xfarm.com:7050
+        - orderer2.xfarm.com:8050
+        - orderer3.xfarm.com:9050
+        - orderer4.xfarm.com:10050
+        - orderer5.xfarm.com:11050
+
+    EtcdRaft:
+        Consenters:
+        - Host: orderer.xfarm.com
+          Port: 7050
+          ClientTLSCert: ../organizations/ordererOrganizations/xfarm.com/orderers/orderer.xfarm.com/tls/server.crt
+          ServerTLSCert: ../organizations/ordererOrganizations/xfarm.com/orderers/orderer.xfarm.com/tls/server.crt
+        - Host: orderer2.xfarm.com
+          Port: 8050
+          ClientTLSCert: ../organizations/ordererOrganizations/xfarm.com/orderers/orderer2.xfarm.com/tls/server.crt
+          ServerTLSCert: ../organizations/ordererOrganizations/xfarm.com/orderers/orderer2.xfarm.com/tls/server.crt
+        - Host: orderer3.xfarm.com
+          Port: 9050
+          ClientTLSCert: ../organizations/ordererOrganizations/xfarm.com/orderers/orderer3.xfarm.com/tls/server.crt
+          ServerTLSCert: ../organizations/ordererOrganizations/xfarm.com/orderers/orderer3.xfarm.com/tls/server.crt
+        - Host: orderer4.xfarm.com
+          Port: 10050
+          ClientTLSCert: ../organizations/ordererOrganizations/xfarm.com/orderers/orderer4.xfarm.com/tls/server.crt
+          ServerTLSCert: ../organizations/ordererOrganizations/xfarm.com/orderers/orderer4.xfarm.com/tls/server.crt
+        - Host: orderer5.xfarm.com
+          Port: 11050
+          ClientTLSCert: ../organizations/ordererOrganizations/xfarm.com/orderers/orderer5.xfarm.com/tls/server.crt
+          ServerTLSCert: ../organizations/ordererOrganizations/xfarm.com/orderers/orderer5.xfarm.com/tls/server.crt  
+
+
+
+    # Batch Timeout: The amount of time to wait before creating a batch
+    BatchTimeout: 2s
+
+    # Batch Size: Controls the number of messages batched into a block
+    BatchSize:
+
+        # Max Message Count: The maximum number of messages to permit in a batch
+        MaxMessageCount: 10
+
+        # Absolute Max Bytes: The absolute maximum number of bytes allowed for
+        # the serialized messages in a batch.
+        AbsoluteMaxBytes: 99 MB
+
+        # Preferred Max Bytes: The preferred maximum number of bytes allowed for
+        # the serialized messages in a batch. A message larger than the preferred
+        # max bytes will result in a batch larger than preferred max bytes.
+        PreferredMaxBytes: 512 KB
+
+    # Organizations is the list of orgs which are defined as participants on
+    # the orderer side of the network
+    Organizations:
+
+    # Policies defines the set of policies at this level of the config tree
+    # For Orderer policies, their canonical path is
+    #   /Channel/Orderer/<PolicyName>
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+        # BlockValidation specifies what signatures must be included in the block
+        # from the orderer for the peer to validate it.
+        BlockValidation:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+
+################################################################################
+#
+#   CHANNEL
+#
+################################################################################
+Channel: &ChannelDefaults
+    Policies:
+        # Who may invoke the 'Deliver' API
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        # Who may invoke the 'Broadcast' API
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        # By default, who may modify elements at this config level
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+
+    Capabilities:
+        <<: *ChannelCapabilities
+
+################################################################################
+#
+#   Profile
+#
+################################################################################
+Profiles:
+
+    OrgsOrdererGenesis:
+        <<: *ChannelDefaults
+        Orderer:
+            <<: *OrdererDefaults
+            Organizations:
+                - *Ordererxfarm
+            Capabilities:
+                <<: *OrdererCapabilities
+        Consortiums:
+            XfarmConsortium:
+                Organizations:
+                    - *Org1
+                    - *Org2
+    OrgsChannel:
+        Consortium: XfarmConsortium
+        <<: *ChannelDefaults
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *Org1
+                - *Org2
+            Capabilities:
+                <<: *ApplicationCapabilities
+
+    MultiNodeEtcdRaft:
+        <<: *ChannelDefaults
+        Capabilities:
+            <<: *ChannelCapabilities
+        Orderer:
+            <<: *OrdererDefaults
+            OrdererType: etcdraft
+            EtcdRaft:
+                Consenters:
+                - Host: orderer.xfarm.com
+                  Port: 7050
+                  ClientTLSCert: ../organizations/ordererOrganizations/xfarm.com/orderers/orderer.xfarm.com/tls/server.crt
+                  ServerTLSCert: ../organizations/ordererOrganizations/xfarm.com/orderers/orderer.xfarm.com/tls/server.crt
+                - Host: orderer2.xfarm.com
+                  Port: 7050
+                  ClientTLSCert: ../organizations/ordererOrganizations/xfarm.com/orderers/orderer2.xfarm.com/tls/server.crt
+                  ServerTLSCert: ../organizations/ordererOrganizations/xfarm.com/orderers/orderer2.xfarm.com/tls/server.crt
+                - Host: orderer3.xfarm.com
+                  Port: 7050
+                  ClientTLSCert: ../organizations/ordererOrganizations/xfarm.com/orderers/orderer3.xfarm.com/tls/server.crt
+                  ServerTLSCert: ../organizations/ordererOrganizations/xfarm.com/orderers/orderer3.xfarm.com/tls/server.crt
+                - Host: orderer4.xfarm.com
+                  Port: 7050
+                  ClientTLSCert: ../organizations/ordererOrganizations/xfarm.com/orderers/orderer4.xfarm.com/tls/server.crt
+                  ServerTLSCert: ../organizations/ordererOrganizations/xfarm.com/orderers/orderer4.xfarm.com/tls/server.crt
+                - Host: orderer5.xfarm.com
+                  Port: 7050
+                  ClientTLSCert: ../organizations/ordererOrganizations/xfarm.com/orderers/orderer5.xfarm.com/tls/server.crt
+                  ServerTLSCert: ../organizations/ordererOrganizations/xfarm.com/orderers/orderer5.xfarm.com/tls/server.crt
+            Addresses:
+                - orderer.xfarm.com:7050
+                - orderer2.xfarm.com:8050
+                - orderer3.xfarm.com:9050
+                - orderer4.xfarm.com:10050
+                - orderer5.xfarm.com:11050
+
+            Organizations:
+            - *Ordererxfarm
+            Capabilities:
+                <<: *OrdererCapabilities
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+            - <<: *Ordererxfarm
+        Consortiums:
+            XfarmConsortium:
+                Organizations:
+                - *Org1
+                - *Org2
+                

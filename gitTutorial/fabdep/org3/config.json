@@ -1,0 +1,94 @@
+{
+    "name": "org1",
+    "version": "1.0.0",
+    "client": {
+      "organization": "org1",
+      "connection": {
+        "timeout": {
+          "peer": {
+            "endorser": "3000"
+          },
+          "orderer": "3000"
+        }
+      }
+    },
+    "organizations": {
+      "org1": {
+        "mspid": "org1msp",
+        "peers": [
+          "peer1-org1",
+          "peer0-org1"
+        ],
+        "certificateAuthorities": [
+          "debutca"
+        ]
+      }
+    },
+    "orderers": {
+      "orderer0-ordererorg": {
+        "url": "grpcs://52.0.113.147:32001",
+        "grpcOptions": {
+          "ssl-target-name-override": "orderer0-ordererorg",
+          "grpc.keepalive_timeout_ms": 3000
+        },
+        "tlsCACerts": {
+          "path": "/home/manpreet/.fabdep-1.4.6/network1/ordererorg-debutca/orderer0-ordererorg/crypto/msp/tlscacerts/tlsca.pem"
+        }
+      }
+    },
+    "channels": {
+      "mychannel": {
+        "orderers": [
+          "orderer0-ordererorg"
+        ],
+        "peers": {
+          "peer1-org1": {
+            "endorsingPeer": true,
+            "chaincodeQuery": true,
+            "ledgerQuery": true,
+            "eventSource": true
+          },
+          "peer0-org1": {
+            "endorsingPeer": true,
+            "chaincodeQuery": true,
+            "ledgerQuery": true,
+            "eventSource": true
+          }
+        }
+      }
+    },
+    "certificateAuthorities": {
+      "debutca": {
+        "url": "https://52.0.113.147:30001",
+        "caName": "debutca",
+        "tlsCACerts": {
+          "path": "/home/manpreet/.fabdep-1.4.6/network1/debutca/tls-cert.pem"
+        },
+        "httpOptions": {
+          "verify": false
+        }
+      }
+    },
+    "peers": {
+      "peer1-org1": {
+        "url": "grpcs://52.0.113.147:31003",
+        "tlsCACerts": {
+          "path": "/home/manpreet/.fabdep-1.4.6/network1/org1-debutca/msp/tlscacerts/tlsca.pem"
+        },
+        "grpcOptions": {
+          "ssl-target-name-override": "peer1-org1",
+          "grpc.keepalive_timeout_ms": 20000
+        }
+      },
+      "peer0-org1": {
+        "url": "grpcs://52.0.113.147:31000",
+        "tlsCACerts": {
+          "path": "/home/manpreet/.fabdep-1.4.6/network1/org1-debutca/msp/tlscacerts/tlsca.pem"
+        },
+        "grpcOptions": {
+          "ssl-target-name-override": "peer0-org1",
+          "grpc.keepalive_timeout_ms": 20000
+        }
+      }
+    }
+  }

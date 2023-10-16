@@ -1,0 +1,147 @@
+AWS Console Link:- 
+
+https://993050190571.signin.aws.amazon.com/console
+
+Username: manpreetdebut
+Password:: yR8G=7N=
+
+// Use the below commands to install node, npm, nvm, docker and curl
+
+sudo apt-get update
+sudo apt install nodejs -y
+sudo apt install npm -y
+sudo apt install curl 
+curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash 
+
+// Note: export nvm variable to profile file and save this
+source ~/.bashrc
+
+sudo apt install docker.io -y
+sudo apt install docker-compose -y
+sudo usermod -a -G docker ubuntu
+sudo apt-add-repository ppa:ansible/ansible
+sudo apt update
+sudo apt install ansible
+
+// Note: After installing ansible do these steps
+
+sudo nano /etc/ansible/ansible.cfg
+
+[defaults]
+
+inventory = /etc/ansible/hosts
+sudo_user = root
+host_key_checking = False 
+
+exit and restart instance
+curl -sSL https://bit.ly/2ysbOFE | bash -s
+
+// Install golang
+
+wget https://dl.google.com/go/go1.18.2.linux-amd64.tar.gz
+
+sudo tar -C /usr/local -xzf go1.18.2.linux-amd64.tar.gz
+
+// Add these env variables to profile file
+
+export PATH=$PATH:/usr/local/go/bin
+export PATH=$PATH:$HOME/fabric-samples/bin
+export GOROOT=/usr/local/go | tee -a $HOME/.profile
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOPATH/bin
+
+source ~/.profile
+
+// Install angular cli globally
+
+npm install -g @angular/cli --prefix ~/.npm-global
+
+export PATH=~/.npm-global/bin:$PATH
+
+// Install Apache Server
+
+sudo apt install apache2
+
+
+// ==================== Now setup the Front end ========================
+// Bitbucket pwd:
+
+ATBB3LeRb43rp8BGbe9wH4XjEZ3X85F3EA97
+
+git clone https://riyazdebut@bitbucket.org/fabdep_debut/fabdep.git
+
+// cd fabdep
+
+branch used :- fix-chaincode branch
+
+npm i --force
+
+ng build --configuration production
+
+// After this mv dist folder to /var/www/html/fabdep using this command
+
+sudo mv dist /var/www/html/fabdep
+
+restart apache2 :-
+
+sudo service apache2 restart
+
+// ==================== Now setup the Backend ========================
+// Bitbucket pwd:
+
+ATBB3LeRb43rp8BGbe9wH4XjEZ3X85F3EA97
+
+git clone https://riyazdebut@bitbucket.org/fabdep_debut/fabdep-2.0.git
+
+// cd fabdep-2.0
+
+branch :- dev-2.x
+
+npm i
+
+// ========================= install pm2 globally ============================
+
+npm install pm2 -g
+
+cd fabdep-2.0
+
+pm2 start ./bin/www/
+
+// ===================== install mongoDB =====================================
+
+curl -fsSL https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -
+
+echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
+
+sudo apt update
+
+echo "deb http://security.ubuntu.com/ubuntu focal-security main" | sudo tee /etc/apt/sources.list.d/focal-security.list
+
+sudo apt-get update
+sudo apt-get install libssl1.1
+
+sudo apt install mongodb-org
+
+sudo systemctl start mongod.service
+
+sudo systemctl status mongod
+
+sudo systemctl enable mongod
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

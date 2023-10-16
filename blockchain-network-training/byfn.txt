@@ -1,0 +1,397 @@
+
+// to enter to GOROOT folder
+sudo nano ~/.profile
+
+============================================================================================================================
+                Build your first network using first-network folder from fabric-samples through commands 
+============================================================================================================================
+
+1: cd fabric-samples/first-network
+
+*********** Generate Network Artifacts ***********
+
+2: ./byfn.sh generate
+
+*********** Bring Up the Network ***********
+
+3: ./byfn.sh up
+
+*********** Bring Down the Network ***********
+
+4: ./byfn.sh down
+
+============================================================================================================================
+                Build your first network using first-network folder from fabric-samples manually 
+============================================================================================================================
+
+1: cd fabric-samples/first-network
+
+*********** Manually generate the artifacts ***********
+
+2: ../bin/cryptogen generate --config=./crypto-config.yaml
+
+*********** We will tell it look in our present working directory **************
+
+3: export FABRIC_CFG_PATH=$PWD
+
+*********** We’ll invoke the configtxgen tool to create the orderer genesis block ***********
+
+4: ../bin/configtxgen -profile TwoOrgsOrdererGenesis -channelID byfn-sys-channel -outputBlock ./channel-artifacts/genesis.block
+
+*********** Create a Channel Configuration Transaction ***********
+
+5: export CHANNEL_NAME=mychannel  && ../bin/configtxgen -profile TwoOrgsChannel -outputCreateChannelTx ./channel-artifacts/channel.tx -channelID $CHANNEL_NAME
+
+*********** we will define the anchor peer for Org1 on the channel that we are constructing ***********
+
+6: ../bin/configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate ./channel-artifacts/Org1MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Org1MSP
+
+*********** We will define the anchor peer for Org2 on the same channel ***********
+
+7: ../bin/configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate ./channel-artifacts/Org2MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Org2MSP
+
+*********** Start the network ***********
+
+8: docker-compose -f docker-compose-cli.yaml up -d
+
+***************** Create & Join Channel ******************
+We will enter the CLI container using the docker exec command
+9: docker exec -it cli bash
+
+**************************************************************************************************************************
+            Next, we are going to pass in the generated channel configuration transaction artifact that we created 
+            in the Create a Channel Configuration Transaction section (we called it channel.tx) to the orderer as 
+            part of the create channel request.
+**************************************************************************************************************************
+
+10: export CHANNEL_NAME=mychannel
+
+# the channel.tx file is mounted in the channel-artifacts directory within your CLI container
+# as a result, we pass the full path for the file
+# we also pass the path for the orderer ca-cert in order to verify the TLS handshake
+# be sure to export or replace the $CHANNEL_NAME variable appropriately
+
+peer channel create -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/channel.tx --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+
+*********** Now let’s join peer0.org1.example.com to the channel. *************
+
+11: peer channel join -b mychannel.block
+
+**************************************************************************************************************************
+            Rather than join every peer, we will simply join peer0.org2.example.com so that we can properly update the 
+            anchor peer definitions in our channel. Since we are overriding the default environment variables baked 
+            into the CLI container, this full command will be the following:
+**************************************************************************************************************************
+
+12: CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp CORE_PEER_ADDRESS=peer0.org2.example.com:9051 CORE_PEER_LOCALMSPID="Org2MSP" CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt peer channel join -b mychannel.block
+
+*********************** Update the anchor peers ****************************
+
+Update the channel definition to define the anchor peer for Org1 as peer0.org1.example.com
+
+13: peer channel update -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/Org1MSPanchors.tx --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+
+Now update the channel definition to define the anchor peer for Org2 as peer0.org2.example.com
+
+14: CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp CORE_PEER_ADDRESS=peer0.org2.example.com:9051 CORE_PEER_LOCALMSPID="Org2MSP" CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt peer channel update -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/Org2MSPanchors.tx --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+
+
+*********************** Install & Instantiate Chaincode *************************
+(Golang) install for Org1
+15: peer chaincode install -n mycc -v 1.0 -p github.com/chaincode/chaincode_example02/go/
+
+**************************************************************************************************************************
+            When we instantiate the chaincode on the channel, the endorsement policy will be set to require 
+            endorsements from a peer in both Org1 and Org2. Therefore, we also need to install the chaincode 
+            on a peer in Org2.
+            Modify the following four environment variables to issue the install command against peer0 in Org2:
+**************************************************************************************************************************
+
+CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp
+CORE_PEER_ADDRESS=peer0.org2.example.com:9051
+CORE_PEER_LOCALMSPID="Org2MSP"
+CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
+
+(Golang) install for Org2
+16: peer chaincode install -n mycc -v 1.0 -p github.com/chaincode/chaincode_example02/go/
+
+**************************************************************************************************************************
+            Next, instantiate the chaincode on the channel. This will initialize the chaincode on the channel, 
+            set the endorsement policy for the chaincode, and launch a chaincode container for the targeted 
+            peer. Take note of the -P argument. This is our policy where we specify the required level of 
+            endorsement for a transaction against this chaincode to be validated.
+**************************************************************************************************************************
+
+
+17: peer chaincode instantiate -o orderer.example.com:7050 --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C $CHANNEL_NAME -n mycc -v 1.0 -c '{"Args":["init","a", "100", "b","200"]}' -P "AND ('Org1MSP.peer','Org2MSP.peer')"
+
+************************************************ Query ********************************************************************
+        Let’s query for the value of a to make sure the chaincode was properly instantiated and the state 
+        DB was populated. The syntax for query is as follows:
+**************************************************************************************************************************
+
+18: peer chaincode query -C $CHANNEL_NAME -n mycc -c '{"Args":["query","a"]}'
+
+************************************************ Invoke ********************************************************************
+        Now let’s move 10 from a to b. This transaction will cut a new block and update the state DB. The 
+        syntax for invoke is as follows:
+**************************************************************************************************************************
+
+19: peer chaincode invoke -o orderer.example.com:7050 --tls true --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C $CHANNEL_NAME -n mycc --peerAddresses peer0.org1.example.com:7051 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt --peerAddresses peer0.org2.example.com:9051 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt -c '{"Args":["invoke","a","b","10"]}'
+
+************************************************ Query ********************************************************************
+        Let’s confirm that our previous invocation executed properly. We initialized the key a with a value 
+        of 100 and just removed 10 with our previous invocation. Therefore, a query against a should return 
+        90. The syntax for query is as follows.
+**************************************************************************************************************************
+
+20: peer chaincode query -C $CHANNEL_NAME -n mycc -c '{"Args":["query","a"]}'
+
+=============================================================================================================================
+                Build your first network using first-network with custom org names TCS & WIPRO manually 
+=============================================================================================================================
+
+************************************************ Query ********************************************************************
+        Before running the cryto command we have to change the crypto-config.yaml file with replacement of Org1MSP=TcsMSP, 
+        Org2MSP=WiproMSP, org1=tcs, org2=wipro
+***************************************************************************************************************************
+
+1: ../bin/cryptogen generate --config=./crypto-config.yaml
+
+************************************************ Query ********************************************************************
+        Before running the config command we have to change the configtx.yaml filewith replacement of Org1MSP=TcsMSP, 
+        Org2MSP=WiproMSP, org1=tcs, org2=wipro
+***************************************************************************************************************************
+
+2: export FABRIC_CFG_PATH=$PWD
+
+3: ../bin/configtxgen -profile TwoOrgsOrdererGenesis -channelID byfn-sys-channel -outputBlock ./channel-artifacts/genesis.block
+
+4: export CHANNEL_NAME=mychannel  && ../bin/configtxgen -profile TwoOrgsChannel -outputCreateChannelTx ./channel-artifacts/channel.tx -channelID $CHANNEL_NAME
+
+5: ../bin/configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate ./channel-artifacts/TcsMSPanchors.tx -channelID $CHANNEL_NAME -asOrg TcsMSP
+
+6: ../bin/configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate ./channel-artifacts/WiproMSPanchors.tx -channelID $CHANNEL_NAME -asOrg WiproMSP
+
+************************************************ Query ********************************************************************
+        Before running the docker up command we have to change the all docker-compose file including 
+        docker-compose-base file that is loacted in base folder with replacement of Org1MSP=TcsMSP, 
+        Org2MSP=WiproMSP, org1=tcs, org2=wipro
+***************************************************************************************************************************
+
+7: docker-compose -f docker-compose-cli.yaml up -d
+
+8: docker exec -it cli bash
+
+9: export CHANNEL_NAME=mychannel
+
+# the channel.tx file is mounted in the channel-artifacts directory within your CLI container
+# as a result, we pass the full path for the file
+# we also pass the path for the orderer ca-cert in order to verify the TLS handshake
+# be sure to export or replace the $CHANNEL_NAME variable appropriately
+
+peer channel create -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/channel.tx --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+
+10: peer channel join -b mychannel.block
+
+11: CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/wipro.example.com/users/Admin@wipro.example.com/msp CORE_PEER_ADDRESS=peer0.wipro.example.com:9051 CORE_PEER_LOCALMSPID="WiproMSP" CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/wipro.example.com/peers/peer0.wipro.example.com/tls/ca.crt peer channel join -b mychannel.block
+
+12: peer channel update -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/TcsMSPanchors.tx --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+
+13: CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/wipro.example.com/users/Admin@wipro.example.com/msp CORE_PEER_ADDRESS=peer0.wipro.example.com:9051 CORE_PEER_LOCALMSPID="WiproMSP" CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/wipro.example.com/peers/peer0.wipro.example.com/tls/ca.crt peer channel update -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/WiproMSPanchors.tx --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+
+14: peer chaincode install -n mycc -v 1.0 -p github.com/chaincode/chaincode_example02/go/
+
+15: CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/wipro.example.com/users/Admin@wipro.example.com/msp
+CORE_PEER_ADDRESS=peer0.wipro.example.com:9051
+CORE_PEER_LOCALMSPID="WiproMSP"
+CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/wipro.example.com/peers/peer0.wipro.example.com/tls/ca.crt
+
+16: peer chaincode install -n mycc -v 1.0 -p github.com/chaincode/chaincode_example02/go/
+
+17: peer chaincode instantiate -o orderer.example.com:7050 --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C $CHANNEL_NAME -n mycc -v 1.0 -c '{"Args":["init","a", "100", "b","200"]}' -P "AND ('TcsMSP.peer','WiproMSP.peer')"
+
+18: peer chaincode query -C $CHANNEL_NAME -n mycc -c '{"Args":["query","a"]}'
+
+19: peer chaincode invoke -o orderer.example.com:7050 --tls true --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C $CHANNEL_NAME -n mycc --peerAddresses peer0.tcs.example.com:7051 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/tcs.example.com/peers/peer0.tcs.example.com/tls/ca.crt --peerAddresses peer0.wipro.example.com:9051 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/wipro.example.com/peers/peer0.wipro.example.com/tls/ca.crt -c '{"Args":["invoke","a","b","10"]}'
+
+20: peer chaincode query -C $CHANNEL_NAME -n mycc -c '{"Args":["query","a"]}'
+
+
+==============================================================================================================================
+                                Build your first-network with shell scripts
+==============================================================================================================================
+./byfn.sh down
+docker rm -f $(docker ps -aq)
+docker network prune
+docker volume prune
+./scripts/crypto-commands.sh
+
+export CHANNEL_NAME=mychannel
+
+./scripts/cli-commands.sh
+./scripts/cc-install.sh
+
+set for environment variable given below
+
+./scripts/cc-install2.sh
+
+
+
+// to enter to GOROOT folder
+sudo nano ~/.profile
+
+//four en variable set for install chaincode for peer0-org2
+CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/wipro.example.com/users/Admin@wipro.example.com/msp
+CORE_PEER_ADDRESS=peer0.wipro.example.com:9051
+CORE_PEER_LOCALMSPID="WiproMSP"
+CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/wipro.example.com/peers/peer0.wipro.example.com/tls/ca.crt
+
+==============================================================================================================================
+                        Build your first-network with one organizations
+==============================================================================================================================
+1: ../bin/cryptogen generate --config=./crypto-config.yaml
+
+2: export FABRIC_CFG_PATH=$PWD
+
+3: ../bin/configtxgen -profile SingleOrgsOrdererGenesis -channelID byfn-sys-channel -outputBlock ./channel-artifacts/genesis.block
+
+4: export CHANNEL_NAME=mychannel  && ../bin/configtxgen -profile SingleOrgsChannel -outputCreateChannelTx ./channel-artifacts/channel.tx -channelID $CHANNEL_NAME
+
+5: ../bin/configtxgen -profile SingleOrgsChannel -outputAnchorPeersUpdate ./channel-artifacts/TcsMSPanchors.tx -channelID $CHANNEL_NAME -asOrg TcsMSP
+
+6: docker-compose -f docker-compose-cli.yaml up -d
+
+7: docker exec -it cli bash
+
+8: export CHANNEL_NAME=mychannel
+
+9: peer channel create -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/channel.tx --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+
+10: peer channel join -b mychannel.block
+
+11: peer channel update -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/TcsMSPanchors.tx --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+
+12: peer chaincode install -n mycc -v 1.0 -p github.com/chaincode/chaincode_example02/go/
+
+13: peer chaincode instantiate -o orderer.example.com:7050 --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C $CHANNEL_NAME -n mycc -v 1.0 -c '{"Args":["init","a", "100", "b","200"]}' -P "AND ('TcsMSP.peer','WiproMSP.peer')"
+
+14: peer chaincode query -C $CHANNEL_NAME -n mycc -c '{"Args":["query","a"]}'
+
+==============================================================================================================================
+ Build your first network using first-network with 3 custom org names TCS, WIPRO &Nagarro 
+==============================================================================================================================
+1: ../bin/cryptogen generate --config=./crypto-config.yaml
+
+2: export FABRIC_CFG_PATH=$PWD
+
+3: ../bin/configtxgen -profile ThreeOrgsOrdererGenesis -channelID byfn-sys-channel -outputBlock ./channel-artifacts/genesis.block
+
+4: export CHANNEL_NAME=mychannel  && ../bin/configtxgen -profile ThreeOrgsChannel -outputCreateChannelTx ./channel-artifacts/channel.tx -channelID $CHANNEL_NAME
+
+5: ../bin/configtxgen -profile ThreeOrgsChannel -outputAnchorPeersUpdate ./channel-artifacts/TcsMSPanchors.tx -channelID $CHANNEL_NAME -asOrg TcsMSP
+
+6: ../bin/configtxgen -profile ThreeOrgsChannel -outputAnchorPeersUpdate ./channel-artifacts/WiproMSPanchors.tx -channelID $CHANNEL_NAME -asOrg WiproMSP
+
+7: ../bin/configtxgen -profile ThreeOrgsChannel -outputAnchorPeersUpdate ./channel-artifacts/NagarroMSPanchors.tx -channelID $CHANNEL_NAME -asOrg NagarroMSP
+
+8: docker-compose -f docker-compose-cli.yaml up -d
+
+8: docker exec -it cli bash
+
+9: export CHANNEL_NAME=mychannel
+
+# the channel.tx file is mounted in the channel-artifacts directory within your CLI container
+# as a result, we pass the full path for the file
+# we also pass the path for the orderer ca-cert in order to verify the TLS handshake
+# be sure to export or replace the $CHANNEL_NAME variable appropriately
+
+peer channel create -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/channel.tx --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+
+10: peer channel join -b mychannel.block
+
+11: CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/wipro.example.com/users/Admin@wipro.example.com/msp CORE_PEER_ADDRESS=peer0.wipro.example.com:9051 CORE_PEER_LOCALMSPID="WiproMSP" CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/wipro.example.com/peers/peer0.wipro.example.com/tls/ca.crt peer channel join -b mychannel.block
+
+12: peer channel update -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/TcsMSPanchors.tx --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+
+13: CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/wipro.example.com/users/Admin@wipro.example.com/msp CORE_PEER_ADDRESS=peer0.wipro.example.com:9051 CORE_PEER_LOCALMSPID="WiproMSP" CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/wipro.example.com/peers/peer0.wipro.example.com/tls/ca.crt peer channel update -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/WiproMSPanchors.tx --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+
+14: peer chaincode install -n mycc -v 1.0 -p github.com/chaincode/chaincode_example02/go/
+
+15: CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/wipro.example.com/users/Admin@wipro.example.com/msp
+CORE_PEER_ADDRESS=peer0.wipro.example.com:9051
+CORE_PEER_LOCALMSPID="WiproMSP"
+CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/wipro.example.com/peers/peer0.wipro.example.com/tls/ca.crt
+
+16: peer chaincode install -n mycc -v 1.0 -p github.com/chaincode/chaincode_example02/go/
+
+17: peer chaincode instantiate -o orderer.example.com:7050 --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C $CHANNEL_NAME -n mycc -v 1.0 -c '{"Args":["init","a", "100", "b","200"]}' -P "AND ('TcsMSP.peer','WiproMSP.peer')"
+
+18: peer chaincode query -C $CHANNEL_NAME -n mycc -c '{"Args":["query","a"]}'
+
+19: peer chaincode invoke -o orderer.example.com:7050 --tls true --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C $CHANNEL_NAME -n mycc --peerAddresses peer0.tcs.example.com:7051 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/tcs.example.com/peers/peer0.tcs.example.com/tls/ca.crt --peerAddresses peer0.wipro.example.com:9051 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/wipro.example.com/peers/peer0.wipro.example.com/tls/ca.crt -c '{"Args":["invoke","a","b","10"]}'
+
+20: peer chaincode query -C $CHANNEL_NAME -n mycc -c '{"Args":["query","a"]}'
+
+=======================================================================================================================
+Build your first network using first-network with 3 custom org names TCS, WIPRO &Nagarro and multiple channel
+=======================================================================================================================
+
+./byfn.sh down
+docker rm -f $(docker ps -aq)
+docker volume prune
+docker network prune
+
+1: ./scripts/crypto-commands.sh
+
+2: export CHANNEL_NAME=acchannel
+
+3: ./scripts/cli-commands2.sh
+
+
+4: set environment variable given below  for Org2
+/////////////////
+"CORE_PEER_LOCALMSPID=WiproMSP"  
+"CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/wipro.example.com/peers/peer0.wipro.example.com/tls/ca.crt" -e 
+"CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/wipro.example.com/users/Admin@wipro.example.com/msp" -e 
+"CORE_PEER_ADDRESS=peer0.wipro.example.com:9051" 
+///////////
+======================= Env variable for install chaincode on org2 ==============================================
+CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/wipro.example.com/users/Admin@wipro.example.com/msp
+CORE_PEER_ADDRESS=peer0.wipro.example.com:9051
+CORE_PEER_LOCALMSPID="WiproMSP"
+CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/wipro.example.com/peers/peer0.wipro.example.com/tls/ca.crt
+
+5: peer chaincode install -n mycc -v 1.0 -p github.com/chaincode/chaincode_example02/go/
+
+6: set environment variable given below for org3
+
+======================= Env variable for install chaincode on org3 ==============================================
+
+
+////////////////////
+docker exec -e "CORE_PEER_LOCALMSPID=WiproMSP" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/wipro.example.com/peers/peer0.wipro.example.com/tls/ca.crt" -e "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/wipro.example.com/users/Admin@wipro.example.com/msp" -e "CORE_PEER_ADDRESS=peer0.wipro.example.com:9051" -it cli bash
+
+/////////////////////////////////
+CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/tcs.example.com/users/Admin@tcs.example.com/msp
+CORE_PEER_ADDRESS=peer0.tcs.example.com:7051
+CORE_PEER_LOCALMSPID="TcsMSP"
+CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/tcs.example.com/peers/peer0.tcs.example.com/tls/ca.crt
+
+
+///////////////////////////////
+CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/wipro.example.com/users/Admin@wipro.example.com/msp 
+CORE_PEER_ADDRESS=peer0.wipro.example.com:9051 
+CORE_PEER_LOCALMSPID="WiproMSP" 
+CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/wipro.example.com/peers/peer0.wipro.example.com/tls/ca.crt
+
+////////////////////////////////////
+CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/nagarro.example.com/users/Admin@nagarro.example.com/msp
+CORE_PEER_ADDRESS=peer0.nagarro.example.com:11051
+CORE_PEER_LOCALMSPID="NagarroMSP"
+CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/nagarro.example.com/peers/peer0.nagarro.example.com/tls/ca.crt
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+peer lifecycle chaincode package basic.tar.gz --path ../asset-transfer-basic/kore_chaincode/ --lang golang --label basic_1.0

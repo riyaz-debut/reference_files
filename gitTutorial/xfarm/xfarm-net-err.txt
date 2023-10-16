@@ -1,0 +1,7 @@
+ERRO [chaincode] HandleTransaction -> [f0ab5d63] Failed to handle PUT_STATE. error: this instance should not be used after calling Done()
+
+
+ERRO [chaincode] isValidTxSim -> no ledger context: xfarm-channel a1dc88232ebd00bb8974ced163236f288372b56228386649c09a1697b65ed476
+
+
+ERRO [chaincode] HandleTransaction -> [a1dc8823] Failed to handle PUT_STATE. error: no ledger context
